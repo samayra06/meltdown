@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./styles.css";
+import { submitMeltdown, fetchMeltdowns, addReplyToMeltdown } from "./utils/firestore";
 
 type EmotionFlavor =
   | "numb"
@@ -79,6 +80,30 @@ export default function App() {
   const [replyText, setReplyText] = useState("");
 
   useEffect(() => {
+    loadMeltdowns();
+  }, []);
+
+  const loadMeltdowns = async () => {
+    const raw = await fetchMeltdowns();
+    const mapped = raw.map((item: any) => {
+      const style = flavorStyles[item.flavor as EmotionFlavor] || flavorStyles.sad;
+      return {
+        id: item.id,
+        text: item.text,
+        flavor: item.flavor,
+        replies: item.replies || [],
+        timestamp: new Date().toLocaleString(),
+        x: item.x ?? Math.random() * 80 + 10,
+        y: item.y ?? Math.random() * 80 + 10,
+        gradient: style.gradient,
+        animation: style.animation,
+        tag: style.tag,
+      };
+    });
+    setEmotions(mapped);
+  };
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setEmotions((prev) =>
         prev.map((emo) => ({
@@ -91,44 +116,37 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
+
     const style = flavorStyles[flavor];
-    const newEmotion: Emotion = {
-      id: Date.now().toString(),
+    const data = {
       text: text.trim().toLowerCase(),
-      timestamp: new Date().toLocaleString(),
+      flavor,
+      replies: [],
       x: Math.random() * 80 + 10,
       y: Math.random() * 80 + 10,
       gradient: style.gradient,
       animation: style.animation,
       tag: style.tag,
-      flavor,
-      replies: [],
     };
-    setEmotions((prev) => [...prev, newEmotion]);
+
+    await submitMeltdown(data);
     setText("");
+    loadMeltdowns();
   };
 
   const handleReply = (id: string) => {
     setReplyId(id);
   };
 
-  const submitReply = () => {
-    if (!replyText.trim()) return;
-    setEmotions((prev) =>
-      prev.map((emo) =>
-        emo.id === replyId
-          ? {
-              ...emo,
-              replies: [...emo.replies, replyText.trim().toLowerCase()],
-            }
-          : emo
-      )
-    );
+  const submitReply = async () => {
+    if (!replyText.trim() || !replyId) return;
+    await addReplyToMeltdown(replyId, replyText.trim().toLowerCase());
     setReplyText("");
     setReplyId(null);
+    loadMeltdowns();
   };
 
   if (showSplash) {
@@ -207,3 +225,4 @@ export default function App() {
     </div>
   );
 }
+
