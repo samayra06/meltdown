@@ -1,16 +1,15 @@
-// src/firebase.ts
+// firebase.ts
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBldhvu1lPn2e3rp_YeMokN_VuBNl9Q3qA",
-  authDomain: "meltdown-787cd.firebaseapp.com",
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
   projectId: "meltdown-787cd",
-  storageBucket: "meltdown-787cd.appspot.com",
-  messagingSenderId: "721027549148",
-  appId: "1:721027549148:web:b07b2fc38d2bc4e2087119"
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_ID",
+  appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-
