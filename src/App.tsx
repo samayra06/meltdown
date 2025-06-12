@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./styles.css";
-import { submitMeltdown, fetchMeltdowns, addReplyToMeltdown } from "./utils/firestore";
+import { submitMeltdown, fetchMeltdowns, addReplyToMeltdown } from "./utils/firestoreAPI";
 
 type EmotionFlavor =
   | "numb"
