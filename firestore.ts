@@ -9,11 +9,13 @@ import {
 } from 'firebase/firestore';
 
 export const submitMeltdown = async (data: any) => {
+  console.log("Submitting to Firestore:", data); // 👈 This logs the data you're sending
   return await addDoc(collection(db, 'meltdowns'), {
     ...data,
     timestamp: serverTimestamp()
   });
 };
+
 
 export const fetchMeltdowns = async () => {
   const q = query(collection(db, 'meltdowns'), orderBy('timestamp', 'desc'));
