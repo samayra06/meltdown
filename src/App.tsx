@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./styles.css";
-import { submitMeltdown, fetchMeltdowns, addReplyToMeltdown } from "./utils/firestoreAPI";
+import { submitMeltdown, fetchMeltdowns, addReplyToMeltdown } from "./firestore"; // ✅ Corrected path
 
 type EmotionFlavor =
   | "numb"
@@ -225,4 +225,3 @@ export default function App() {
     </div>
   );
 }
-
